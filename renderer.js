@@ -1,14 +1,49 @@
 const information = document.getElementById('info');
-information.innerText = `This app is using Chrome (v${versions.chrome()}), Node.js (v${versions.node()}), and Electron (v${versions.electron()})`;
+// information.innerText = `This app is using Chrome (v${versions.chrome()}), Node.js (v${versions.node()}), and Electron (v${versions.electron()})`;
 
 const qrSubmit = document.getElementById('qr-submit');
 
 const qrInput = document.getElementById('qr-input');
+let isFocusVisible = false;
 
-const handleSubmit = async () => {
+qrInput.addEventListener('focus', () => {
+    isFocusVisible = true;
+
+    const label = document.getElementById('qr-label');
+    if (isFocusVisible) {
+        label.classList.add('has-data');
+    }
+})
+
+qrInput.addEventListener('blur', () => {
+    isFocusVisible = false;
+
+    const label = document.getElementById('qr-label');
+    if (!isFocusVisible && qrInput.value.length <= 0) {
+        label.classList.remove('has-data');
+    }
+})
+
+window.addEventListener('DOMContentLoaded', () => {
+    if (document.activeElement === qrInput) {
+        isFocusVisible = true;
+
+        const qrLabel = document.getElementById('qr-label');
+        qrLabel.classList.add('has-data');
+    }
+})
+
+const handleInput = async () => {
     console.log("We have submitted something");
     const input = qrInput.value;
     console.log(`INPUT: ${input}`);
+    if (input.length > 17) {
+        qrInput.classList.add('invalid');
+    }
+    else {
+        qrInput.classList.remove('invalid');
+    }
+
     let total = "";
     const modeIndicator = "0100";
     let charCount = parseInt(input.length).toString(2);
@@ -63,11 +98,12 @@ const handleSubmit = async () => {
     console.log(`Test: gfMultiply(2,5, gfExp, gfLog): ${gfMultiply(3,7,gfExp,gfLog)}`);
 
     console.log(generateErrorCorrection(splitArray, gfExp, gfLog));
-
+    const errorCorrectionBytes = generateErrorCorrection(splitArray, gfExp, gfLog);
+    const allBytes = [...splitArray, ...errorCorrectionBytes];
     
     let matrix = createMatrix();
 
-    matrix = placeData(matrix,splitArray);
+    matrix = placeData(matrix, allBytes);
     // await placeDataAnimated(matrix, splitArray, renderQRCode);
 
     let bestMask = null;
@@ -86,7 +122,8 @@ const handleSubmit = async () => {
 
     console.log(`Best mask: ${bestMask} with penalty ${lowestPenalty}`);
 
-    renderQRCode(applyMask(matrix, bestMask));
+    matrix = applyMask(matrix, bestMask);
+    renderQRCode(matrix, "blue");
 
     // L level
     const errorCorrectionBits = '01';
@@ -104,9 +141,8 @@ const handleSubmit = async () => {
 
     console.log(`finalFormat: ${finalFormat}`);
 
-    for (let i = 0; i < 8; i++) {
-
-    }
+    matrix = placeFormatInformation(matrix, finalFormat);
+    renderQRCode(matrix, "black");
 
 
     // renderQRCode(matrix);
@@ -233,7 +269,7 @@ function createMatrix() {
     return matrix;
 }
 
-function renderQRCode(matrix) {
+function renderQRCode(matrix, colour) {
     const canvas = document.getElementById('qr-code');
     const ctx = canvas.getContext('2d');
 
@@ -244,9 +280,9 @@ function renderQRCode(matrix) {
     for (let i = 0; i < matrix.length; i++) {
         for (let j = 0; j < matrix[0].length; j++) {
             if (matrix[i][j] === 1 || matrix[i][j] === 11) {
-                ctx.fillStyle = 'black';
+                ctx.fillStyle = colour;
             }
-            else if (matrix[i][j] === 0 || matrix[i][j] == 10) {
+            else if (matrix[i][j] === 0 || matrix[i][j] === 10) {
                 ctx.fillStyle = 'white';
             }
             else if (matrix[i][j] === 2) {
@@ -271,11 +307,6 @@ function placeData(matrix, dataBytes) {
 
     for (let col = 20; col >= 0; col -= 2) {
         if (col === 6) col--;
-        setTimeout(() => {
-            console.log("Waiting");
-            renderQRCode(matrix);
-        }, 5000);
-
         const rows = direction === -1
             ? Array.from({ length: 21 }, (_, i) => 20 - i)
             : Array.from({ length: 21 }, (_, i) => i)
@@ -439,4 +470,28 @@ function generateFormatErrorCorrection(formatBits) {
     return data.toString(2).padStart(10, '0');
 }
 
-qrSubmit.addEventListener('click', handleSubmit, false);
+function placeFormatInformation(matrix, finalFormat) {
+    const location1 = [
+        [8,0], [8, 1], [8,2], [8,3], [8,4], [8,5], [8,7], [8,8], 
+        [7,8], [5, 8], [4,8], [3,8], [2,8], [1,8], [0,8],
+    ];
+
+    const location2 = [
+        [20, 8], [19, 8], [18, 8], [17, 8], [16, 8], [15, 8], [14, 8],
+        [8, 20], [8, 19], [8, 18], [8, 17], [8, 16], [8, 15], [8, 14], [8, 13]
+    ];
+
+    console.log("Location 2 current values:");
+location2.forEach(([row, col], i) => {
+    console.log(`Bit ${i} at (${row}, ${col}): current value = ${matrix[row][col]}`);
+});
+
+    for (let i = 0; i < 15; i++) {
+        const bit = parseInt(finalFormat[i], 2);
+        matrix[location1[i][0]][location1[i][1]] = bit;
+        matrix[location2[i][0]][location2[i][1]] = bit;
+    }
+    return matrix;
+}
+
+qrInput.addEventListener('input', handleInput, false);

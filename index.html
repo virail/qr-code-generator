@@ -1,14 +1,24 @@
 <html lang="en">
     <head>
         <link rel="icon" sizes="32x32" href="./favico.ico"></link>
+        <link rel="stylesheet" href="styles.css"></link>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Text:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=Noto+Serif+JP:wght@200..900&family=Stalinist+One&family=UnifrakturCook:wght@700&display=swap" rel="stylesheet">
     </head>
     <body>
-        <p>Hello From Electron Renderer!</p>
-        <p id="info"></p>
-        <input id="qr-input" type="text" style="border: solid 1px oklch(0.5 0.2 128); border-radius: 8px; padding: 4px;" placeholder="QR data" autofocus="true"></input>
-        <button id="qr-submit">Submit</button>
-        <div id="qr-container" style="padding: 2px;">
-            <canvas id="qr-code" width="210" height="210" style="border: solid 2px orange;"></canvas>
+        <p class="header">Generate <span class="your">Your&nbsp;</span> QR Code</p>
+        <!-- <p id="info"></p> -->
+        <div class="qr-input-container">
+            <label for="qr-input" id="qr-label" class="label">Data</label>
+            <input id="qr-input" class="qr-input" type="text" autofocus="true"></input>
+        </div>
+        <div id="qr-container" class="qr-container">
+            <canvas id="qr-code" width="210" height="210"></canvas>
+        </div>
+        <div class="toast hidden">
+            <div class="content">
+            </div>
         </div>
     </body>
     <script src="./renderer.js"></script>
