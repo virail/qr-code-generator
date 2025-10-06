@@ -1,3 +1,7 @@
+html {
+    overflow: hidden;
+}
+
 .newsreader-<uniquifier> {
   font-family: "Newsreader", serif;
   font-optical-sizing: auto;
@@ -11,19 +15,22 @@
     right: 5%;
     width: 512px;
     height: 128px;
-    background-color: #9d9d9d;
+    background-color: #ff7474;
+    box-shadow: 0px 0px 10px -2.5px rgba(120, 20, 20, 0.5);
     border-radius: 10px;
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 4px;
+    font-family: sans-serif;
+    color: #782f2f;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .toast .content {
-    background-color: white;
-    border-radius: 6px;
-    width: 100%;
-    height: 100%;
+    margin-left: 8px;
 }
 
 body {
@@ -54,6 +61,7 @@ body {
 }
 
 .qr-input {
+    background-color: transparent;
     position: relative;
     margin-top: 1rem;
     font-family: sans-serif;
@@ -109,6 +117,29 @@ label.has-data {
     border: 2px solid black;
 }
 
+.qr-container > canvas {
+    padding: 20px;
+    background-color: white;
+}
+
+.toast {
+    transition: all 250ms;
+}
+
 .hidden {
-    display: none;
+    opacity: 0;
+}
+
+.show {
+    opacity: 100;
+}
+
+.background-svg {
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    z-index: -10;
+    transform: scale(1.7);
 }

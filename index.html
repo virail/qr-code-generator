@@ -7,17 +7,41 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Text:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=Noto+Serif+JP:wght@200..900&family=Stalinist+One&family=UnifrakturCook:wght@700&display=swap" rel="stylesheet">
     </head>
     <body>
+        <svg class="background-svg" viewBox="0 0 1920 1080" preserveAspectRatio="none">
+            <defs>
+                <filter id="blend">
+                    <feBlend in="SourceGraphic" in2="url(#grouped-bg)" mode="screen" />
+                </filter>
+                <filter id="noise">
+                    <feTurbulence
+                        type="fractalNoise"
+                        baseFrequency="2.15"
+                        sticthTiles="stitch"
+                    />
+                </filter>
+                <filter id="blur">
+                    <feGaussianBlur in="SourceGraphic" stdDeviation="100" />
+                </filter>
+            </defs>
+            <g id="grouped-bg" filter="url(#blur)">
+                <rect fill="white" x="0" width="1920" y="0" height="1080"/>
+                <path fill="#CBEFDE" d="M0 270 L480 0 L720 178.2 L960 405 L633.6 513 L480 486 L432 567 L633.6 675 L720 810 L1200 874.8 L1440 1080 L0 1080 Z" />
+                <path fill="#E5CCF0" d="M1920 540 L1440 135 L1248 237.6 L1152 356.4 L1056 540 L1200 675 L1248 777.6 L1276.8 896.4 L1440 1015.2 L1593.6 1080 L1920 1080 Z" />
+            </g>
+            <rect filter="url(#noise)" x="0" width="1920" y="0" height="1080" style="mix-blend-mode: screen; opacity: 0.3;" />
+        </svg>
         <p class="header">Generate <span class="your">Your&nbsp;</span> QR Code</p>
         <!-- <p id="info"></p> -->
         <div class="qr-input-container">
             <label for="qr-input" id="qr-label" class="label">Data</label>
-            <input id="qr-input" class="qr-input" type="text" autofocus="true"></input>
+            <input id="qr-input" class="qr-input" type="text" autofocus="true" autocorrect="off" spellcheck="false"></input>
         </div>
         <div id="qr-container" class="qr-container">
             <canvas id="qr-code" width="210" height="210"></canvas>
         </div>
-        <div class="toast hidden">
-            <div class="content">
+        <div id="toast" class="toast hidden">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-alert-icon lucide-circle-alert"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+            <div id="content" class="content">
             </div>
         </div>
     </body>

@@ -5,6 +5,9 @@ const qrSubmit = document.getElementById('qr-submit');
 
 const qrInput = document.getElementById('qr-input');
 let isFocusVisible = false;
+const toastContent = document.getElementById('content');
+
+const toast = document.getElementById('toast');
 
 qrInput.addEventListener('focus', () => {
     isFocusVisible = true;
@@ -38,10 +41,17 @@ const handleInput = async () => {
     const input = qrInput.value;
     console.log(`INPUT: ${input}`);
     if (input.length > 17) {
-        qrInput.classList.add('invalid');
+        toastContent.innerText = "Input exceeds max length of 17 characters"
+        toast.classList.remove('hidden');
+        toast.classList.add('show');
     }
     else {
-        qrInput.classList.remove('invalid');
+        if (!toast.classList.contains('hidden')) {
+            toast.classList.add('hidden');
+        }
+        if (toast.classList.contains('show')) {
+            toast.classList.remove('show');
+        }
     }
 
     let total = "";
